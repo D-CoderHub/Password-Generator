@@ -11,247 +11,157 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
         body {
-            background-color: #333; /* Dark Gray */
-            color: white;
+            background-color: #1c1c1c;
+            color: #fff;
             text-align: center;
-        }
-
-        header {
-            background-color: #222;
-            color: white;
-            padding: 15px;
-            font-size: 24px;
-        }
-
-        .container {
-            margin: 50px auto;
             padding: 20px;
-            background: #444;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
         }
-
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
         button {
-            padding: 10px 20px;
-            margin: 10px;
+            padding: 10px 15px;
             border: none;
-            background-color: #28a745; /* Green */
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .generate-btn {
+            background-color: #28a745;
             color: white;
             font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
         }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        .input-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        input {
-            width: 70%;
-            padding: 10px;
-            font-size: 16px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
         .copy-btn {
+            background-color: #007bff;
+            color: white;
+            margin-left: 10px;
+        }
+        .password-box {
+            width: 100%;
             padding: 10px;
-            background-color: white;
-            color: black;
-            border: none;
-            cursor: pointer;
+            margin: 10px 0;
+            font-size: 18px;
+            text-align: center;
+            background: #222;
+            border-radius: 5px;
+            word-wrap: break-word;
+        }
+        .saved-passwords {
+            background: #444;
+            padding: 10px;
+            margin-top: 20px;
             border-radius: 5px;
         }
-
-        .copy-btn:hover {
-            background-color: lightgray;
+        .delete-btn {
+            background: red;
+            color: white;
+            font-size: 14px;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
         }
-
-        .saved-passwords {
-            margin-top: 20px;
-            text-align: left;
-            padding: 10px;
-            background: #555;
-            width: 90%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            font-size: 18px;
+            display: none;
         }
-
-        .password-item {
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #777;
-            position: relative;
-        }
-
-        .menu-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: white;
-            cursor: pointer;
-        }
-
-        .menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 30px;
-            background: transparent; /* White Background Removed */
-            box-shadow: none;
-            border-radius: 5px;
-            z-index: 10;
-        }
-
-        .menu button {
-            width: 80px;
+            background: #222;
             padding: 8px;
-            background: red;
-            color: white;
-            border: none;
+            margin-top: 5px;
             border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .menu button:hover {
-            background: darkred;
-        }
-
-        footer {
-            background-color: #222;
-            color: white;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            font-size: 14px;
-        }
-
-        @media (max-width: 600px) {
-            .container, .saved-passwords {
-                width: 95%;
-            }
         }
     </style>
 </head>
 <body>
 
-    <header>Password Generator</header>
+    <h1>Password Generator</h1>
+    
+    <div class="container">
+        <button class="generate-btn" onclick="generatePassword()">Generate Password</button>
+        <button class="copy-btn" onclick="copyPassword()">Copy</button>
+        <div class="password-box" id="password-box">Your Password</div>
+    </div>
 
-    <main>
-        <div class="container">
-            <h2>Generate a Secure Password</h2>
-            <button onclick="generatePassword()">Generate Password</button>
-            <div class="input-container">
-                <input type="text" id="password" readonly>
-                <button class="copy-btn" onclick="copyPassword()">Copy</button>
-            </div>
-        </div>
+    <div class="saved-passwords">
+        <h2>Saved Passwords</h2>
+        <ul id="password-list"></ul>
+    </div>
 
-        <div class="saved-passwords">
-            <h3>Saved Passwords:</h3>
-            <ul id="password-list"></ul>
-        </div>
-    </main>
-
-    <footer>© 2025 Password Generator Tool</footer>
+    <div class="popup" id="copy-popup">Copied Password</div>
 
     <script>
-        const generatedPasswords = new Set();
-        const savedPasswords = [];
+        let currentPassword = ""; // সর্বদা লাস্ট পাসওয়ার্ড সংরক্ষণ করবে
+        let savedPasswords = []; // সেভ করা পাসওয়ার্ড লিস্ট
 
         function generatePassword() {
-            const length = 12;
-            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
             let password = "";
-
-            while (true) {
-                for (let i = 0; i < length; i++) {
-                    password += charset.charAt(Math.floor(Math.random() * charset.length));
-                }
-                
-                if (!generatedPasswords.has(password)) {
-                    generatedPasswords.add(password);
-                    document.getElementById("password").value = password;
-                    break;
-                } else {
-                    password = ""; // Reset and generate again
-                }
+            for (let i = 0; i < 12; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
             }
+            document.getElementById("password-box").innerText = password;
+            currentPassword = password; // লাস্ট পাসওয়ার্ড সংরক্ষণ করা হচ্ছে
         }
 
         function copyPassword() {
-            const passwordField = document.getElementById("password");
-            const password = passwordField.value;
+            if (currentPassword) {
+                navigator.clipboard.writeText(currentPassword);
 
-            if (password) {
-                navigator.clipboard.writeText(password).then(() => {
-                    alert("Password copied to clipboard!");
-                    savePassword(password);
-                });
+                // যদি পাসওয়ার্ড লিস্টে না থাকে তাহলে অ্যাড করো
+                if (!savedPasswords.includes(currentPassword)) {
+                    savePassword(currentPassword);
+                }
+
+                // Show popup
+                const popup = document.getElementById("copy-popup");
+                popup.style.display = "block";
+                setTimeout(() => { popup.style.display = "none"; }, 1500);
             }
         }
 
         function savePassword(password) {
-            if (!savedPasswords.includes(password)) {
-                savedPasswords.push(password);
-                const passwordList = document.getElementById("password-list");
+            savedPasswords.push(password); // সেভ লিস্টে যোগ হচ্ছে
+            updateSavedPasswords();
+        }
 
+        function updateSavedPasswords() {
+            const list = document.getElementById("password-list");
+            list.innerHTML = ""; // আগের সব মুছে ফেলা হচ্ছে
+            savedPasswords.forEach((password, index) => {
                 const listItem = document.createElement("li");
-                listItem.classList.add("password-item");
-                listItem.innerHTML = `
-                    ${password}
-                    <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-                    <div class="menu">
-                        <button onclick="deletePassword(this, '${password}')">Delete</button>
-                    </div>
-                `;
-                passwordList.appendChild(listItem);
-            }
+                listItem.innerHTML = `${password} <button class="delete-btn" onclick="deletePassword(${index})">Delete</button>`;
+                list.appendChild(listItem);
+            });
         }
 
-        function toggleMenu(button) {
-            const menu = button.nextElementSibling;
-            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        function deletePassword(index) {
+            savedPasswords.splice(index, 1); // লিস্ট থেকে ডিলিট করা হচ্ছে
+            updateSavedPasswords();
         }
-
-        function deletePassword(button, password) {
-            const listItem = button.closest(".password-item");
-            listItem.remove();
-
-            // Remove from savedPasswords array
-            const index = savedPasswords.indexOf(password);
-            if (index > -1) {
-                savedPasswords.splice(index, 1);
-            }
-        }
-
-        document.addEventListener("click", (event) => {
-            if (!event.target.classList.contains("menu-btn")) {
-                document.querySelectorAll(".menu").forEach(menu => {
-                    menu.style.display = "none";
-                });
-            }
-        });
     </script>
 
 </body>
