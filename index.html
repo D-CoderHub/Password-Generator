@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #333; /* Dark Gray */
+            color: white;
+            text-align: center;
+        }
+
+        header {
+            background-color: #222;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            background: #444;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            background-color: #28a745; /* Green */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .copy-btn {
+            padding: 10px;
+            background-color: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .copy-btn:hover {
+            background-color: lightgray;
+        }
+
+        .saved-passwords {
+            margin-top: 20px;
+            text-align: left;
+            padding: 10px;
+            background: #555;
+            width: 90%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .password-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #777;
+            position: relative;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 30px;
+            background: transparent; /* White Background Removed */
+            box-shadow: none;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        .menu button {
+            width: 80px;
+            padding: 8px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .menu button:hover {
+            background: darkred;
+        }
+
+        footer {
+            background-color: #222;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .container, .saved-passwords {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>Password Generator</header>
+
+    <main>
+        <div class="container">
+            <h2>Generate a Secure Password</h2>
+            <button onclick="generatePassword()">Generate Password</button>
+            <div class="input-container">
+                <input type="text" id="password" readonly>
+                <button class="copy-btn" onclick="copyPassword()">Copy</button>
+            </div>
+        </div>
+
+        <div class="saved-passwords">
+            <h3>Saved Passwords:</h3>
+            <ul id="password-list"></ul>
+        </div>
+    </main>
+
+    <footer>© 2025 Password Generator Tool</footer>
+
+    <script>
+        const generatedPasswords = new Set();
+        const savedPasswords = [];
+
+        function generatePassword() {
+            const length = 12;
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+            let password = "";
+
+            while (true) {
+                for (let i = 0; i < length; i++) {
+                    password += charset.charAt(Math.floor(Math.random() * charset.length));
+                }
+                
+                if (!generatedPasswords.has(password)) {
+                    generatedPasswords.add(password);
+                    document.getElementById("password").value = password;
+                    break;
+                } else {
+                    password = ""; // Reset and generate again
+                }
+            }
+        }
+
+        function copyPassword() {
+            const passwordField = document.getElementById("password");
+            const password = passwordField.value;
+
+            if (password) {
+                navigator.clipboard.writeText(password).then(() => {
+                    alert("Password copied to clipboard!");
+                    savePassword(password);
+                });
+            }
+        }
+
+        function savePassword(password) {
+            if (!savedPasswords.includes(password)) {
+                savedPasswords.push(password);
+                const passwordList = document.getElementById("password-list");
+
+                const listItem = document.createElement("li");
+                listItem.classList.add("password-item");
+                listItem.innerHTML = `
+                    ${password}
+                    <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+                    <div class="menu">
+                        <button onclick="deletePassword(this, '${password}')">Delete</button>
+                    </div>
+                `;
+                passwordList.appendChild(listItem);
+            }
+        }
+
+        function toggleMenu(button) {
+            const menu = button.nextElementSibling;
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        }
+
+        function deletePassword(button, password) {
+            const listItem = button.closest(".password-item");
+            listItem.remove();
+
+            // Remove from savedPasswords array
+            const index = savedPasswords.indexOf(password);
+            if (index > -1) {
+                savedPasswords.splice(index, 1);
+            }
+        }
+
+        document.addEventListener("click", (event) => {
+            if (!event.target.classList.contains("menu-btn")) {
+                document.querySelectorAll(".menu").forEach(menu => {
+                    menu.style.display = "none";
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
