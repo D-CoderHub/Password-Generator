@@ -9,159 +9,269 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
         }
+
         body {
-            background-color: #1c1c1c;
-            color: #fff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #222;
+            color: white;
             text-align: center;
-            padding: 20px;
+            position: relative;
         }
+
+        .header, .footer {
+            width: 100%;
+            background: #111;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            left: 0;
+        }
+
+        .header {
+            top: 0;
+        }
+
+        .footer {
+            bottom: 0;
+        }
+
         .container {
-            max-width: 400px;
-            margin: auto;
             background: #333;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            margin-top: 60px;
         }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
+
+        .password-box {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #555;
+            border-radius: 5px;
+            background: #444;
+            min-width: 250px;
+            text-align: center;
+            color: white;
         }
+
+        .buttons {
+            margin-top: 10px;
+        }
+
         button {
             padding: 10px 15px;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
-        }
-        .generate-btn {
-            background-color: #28a745;
-            color: white;
             font-size: 16px;
-        }
-        .copy-btn {
-            background-color: #007bff;
-            color: white;
-            margin-left: 10px;
-        }
-        .password-box {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 18px;
-            text-align: center;
-            background: #222;
+            margin: 5px;
             border-radius: 5px;
-            word-wrap: break-word;
-        }
-        .saved-passwords {
-            background: #444;
-            padding: 10px;
-            margin-top: 20px;
-            border-radius: 5px;
-        }
-        .delete-btn {
-            background: red;
+            font-weight: bold;
             color: white;
-            font-size: 14px;
-            padding: 5px 10px;
-            margin-top: 10px;
+            user-select: none; /* ক্লিক এফেক্ট রিমুভ */
+            outline: none; /* ফোকাস বর্ডার রিমুভ */
+        }
+
+        .generate-btn { background-color: #007bff; }
+        .copy-btn { background-color: green; }
+
+        .three-dot-btn {
+            background: none;
+            border: none;
+            font-size: 26px;
             cursor: pointer;
-        }
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 5px;
             color: white;
-            font-size: 18px;
-            display: none;
+            user-select: none; /* ক্লিক এফেক্ট রিমুভ */
         }
-        ul {
-            list-style: none;
-            padding: 0;
+
+        .saved-passwords-container {
+            background: #333;
+            padding: 10px;
+            width: 100%;
+            max-width: 350px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+            position: relative;
         }
-        li {
+
+        .saved-passwords-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #222;
+            margin-bottom: 10px;
+        }
+
+        .hide-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .saved-password {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #444;
             padding: 8px;
-            margin-top: 5px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .popup-menu {
+            display: none;
+            position: absolute;
+            top: -50px;
+            right: 10px;
+            background: #555;
+            padding: 5px;
             border-radius: 5px;
         }
+
+        .popup-menu button {
+            display: block;
+            width: 100%;
+            margin: 2px 0;
+            background: #777;
+            color: white;
+        }
+
+        .copy-message {
+            position: fixed;
+            bottom: 50px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: none;
+        }
+
     </style>
 </head>
 <body>
 
-    <h1>Password Generator</h1>
-    
+    <div class="header">🔑 Password Generator</div>
+
     <div class="container">
-        <button class="generate-btn" onclick="generatePassword()">Generate Password</button>
-        <button class="copy-btn" onclick="copyPassword()">Copy</button>
-        <div class="password-box" id="password-box">Your Password</div>
+        <h2>🔒 Generate a Secure Password</h2>
+        <div class="password-box" id="password">Click Generate</div>
+        <div class="buttons">
+            <button class="generate-btn" onclick="generatePassword()">Generate</button>
+            <button class="copy-btn" onclick="copyText()">Copy</button>
+        </div>
     </div>
 
-    <div class="saved-passwords">
-        <h2>Saved Passwords</h2>
-        <ul id="password-list"></ul>
+    <div class="saved-passwords-container">
+        <div class="saved-passwords-header">
+            <h3>Saved Passwords</h3>
+            <button class="hide-btn" onclick="toggleHide()">👁</button>
+        </div>
+        <div class="saved-passwords" id="savedPasswords"></div>
     </div>
 
-    <div class="popup" id="copy-popup">Copied Password</div>
+    <div class="copy-message" id="copyMessage"></div>
+
+    <div class="footer">© 2025 Password Generator</div>
 
     <script>
-        let currentPassword = ""; // সর্বদা লাস্ট পাসওয়ার্ড সংরক্ষণ করবে
-        let savedPasswords = []; // সেভ করা পাসওয়ার্ড লিস্ট
+        let hidePasswords = false;
+
+        document.addEventListener("DOMContentLoaded", loadSavedPasswords);
 
         function generatePassword() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+            let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
             let password = "";
-            for (let i = 0; i < 12; i++) {
+            for (let i = 12; i > 0; i--) {
                 password += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            document.getElementById("password-box").innerText = password;
-            currentPassword = password; // লাস্ট পাসওয়ার্ড সংরক্ষণ করা হচ্ছে
+            document.getElementById("password").textContent = password;
         }
 
-        function copyPassword() {
-            if (currentPassword) {
-                navigator.clipboard.writeText(currentPassword);
+        function copyText() {
+            let password = document.getElementById("password").textContent;
+            if (password === "Click Generate") return;
 
-                // যদি পাসওয়ার্ড লিস্টে না থাকে তাহলে অ্যাড করো
-                if (!savedPasswords.includes(currentPassword)) {
-                    savePassword(currentPassword);
-                }
-
-                // Show popup
-                const popup = document.getElementById("copy-popup");
-                popup.style.display = "block";
-                setTimeout(() => { popup.style.display = "none"; }, 1500);
-            }
-        }
-
-        function savePassword(password) {
-            savedPasswords.push(password); // সেভ লিস্টে যোগ হচ্ছে
-            updateSavedPasswords();
-        }
-
-        function updateSavedPasswords() {
-            const list = document.getElementById("password-list");
-            list.innerHTML = ""; // আগের সব মুছে ফেলা হচ্ছে
-            savedPasswords.forEach((password, index) => {
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `${password} <button class="delete-btn" onclick="deletePassword(${index})">Delete</button>`;
-                list.appendChild(listItem);
+            navigator.clipboard.writeText(password).then(() => {
+                showCopyMessage(password);
+                savePassword(password);
             });
         }
 
-        function deletePassword(index) {
-            savedPasswords.splice(index, 1); // লিস্ট থেকে ডিলিট করা হচ্ছে
-            updateSavedPasswords();
+        function savePassword(password) {
+            let storedPasswords = JSON.parse(localStorage.getItem("passwords")) || [];
+            if (!storedPasswords.includes(password)) {
+                storedPasswords.push(password);
+                localStorage.setItem("passwords", JSON.stringify(storedPasswords));
+            }
+            loadSavedPasswords();
         }
+
+        function loadSavedPasswords() {
+            let savedPasswords = document.getElementById("savedPasswords");
+            savedPasswords.innerHTML = "";
+            let storedPasswords = JSON.parse(localStorage.getItem("passwords")) || [];
+
+            storedPasswords.forEach(password => {
+                let div = document.createElement("div");
+                div.classList.add("saved-password");
+                div.innerHTML = `
+                    <span class="pass-text">${hidePasswords ? "●●●●●●●●●●" : password}</span>
+                    <button class="three-dot-btn" onclick="togglePopupMenu(this)">⋮</button>
+                    <div class="popup-menu">
+                        <button onclick="copyTextFromSaved('${password}')">Copy</button>
+                        <button onclick="deletePassword('${password}', this)">Delete</button>
+                    </div>
+                `;
+                savedPasswords.appendChild(div);
+            });
+        }
+
+        function copyTextFromSaved(password) {
+            navigator.clipboard.writeText(password).then(() => {
+                showCopyMessage(password);
+            });
+        }
+
+        function deletePassword(password, button) {
+            let storedPasswords = JSON.parse(localStorage.getItem("passwords")) || [];
+            storedPasswords = storedPasswords.filter(pass => pass !== password);
+            localStorage.setItem("passwords", JSON.stringify(storedPasswords));
+            button.closest(".saved-password").remove();
+        }
+
+        function togglePopupMenu(button) {
+            let popupMenu = button.nextElementSibling;
+            popupMenu.style.display = popupMenu.style.display === "block" ? "none" : "block";
+        }
+
+        function toggleHide() {
+            hidePasswords = !hidePasswords;
+            loadSavedPasswords();
+        }
+
+        function showCopyMessage(password) {
+            let messageBox = document.getElementById("copyMessage");
+            messageBox.innerHTML = `🔑 ${password} is Copied!`;
+            messageBox.style.display = "block";
+
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 1500);
+        }
+
     </script>
 
 </body>
